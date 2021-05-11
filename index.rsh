@@ -4,13 +4,15 @@ const [isHand, ROCK, PAPER, SCISSORS] = makeEnum(3);
 const [isOutcome, B_WINS, DRAW, A_WINS] = makeEnum(3);
 const [isCard, ZERO, ONE, TWO] = makeEnum(3);
 
+// TODO: First 2 cards must be given automatically (new function)
+// TODO: Choose the winner according to the distance instead of sum
 const winner = (sumA, sumB) =>
   (sumA > sumB ? 2 : (sumA < sumB ? 0 : 1));
-
+ 
 const Player =
 {
   ...hasRandom,
-  getHand: Fun([], UInt),
+  //getHand: Fun([], UInt),
   getCard: Fun([], UInt),
   seeOutcome: Fun([UInt], Null),
   seeSum: Fun([Tuple(UInt,UInt)], Null),
@@ -61,7 +63,6 @@ export const main =
 
       unknowable(B, A(_handA, _saltA)); // Bob doesn't know Alice's card
       B.only(() => { // Bob draws a card and commits
-        //interact.acceptWager(wager);
         const _handB = interact.getCard();
         const [_commitB, _saltB] = makeCommitment(interact, _handB);
         const commitB = declassify(_commitB);
@@ -69,6 +70,7 @@ export const main =
       B.publish(commitB)
         .timeout(DEADLINE, () => closeTo(A, informTimeout));
 
+      // Game loop starts
       var [isOnA, isOnB, sumA, sumB] = [1, 1, 0, 0];
       invariant(balance() == 2 * wager);
       while (isOnA > 0 || isOnB > 0) {
@@ -84,12 +86,10 @@ export const main =
           const cardB = declassify(interact.getCard());
         });
         B.publish(cardB);
+
         [isOnA, isOnB, sumA, sumB] = [cardA, cardB, sumA + cardA, sumB + cardB];
-
         continue;
-
       }
-
       // Game loop ends
 
       const outcome = winner(sumA, sumB);
@@ -107,7 +107,7 @@ export const main =
       B.publish(saltB, handB).timeout(DEADLINE, () => closeTo(A, informTimeout));
       checkCommitment(commitB, saltB, handB);
 
-
+      // TODO: transfer according to the winner
       transfer(wager * 2).to(A);
 
       commit();

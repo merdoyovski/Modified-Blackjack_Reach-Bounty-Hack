@@ -102,7 +102,8 @@ import { ask, yesno, done } from '@reach-sh/stdlib/ask.mjs';
     'Stand': 0, 's': 0, 'stand': 0, 'S': 0,
     'Hit': 1, 'h': 1, 'hit': 1, 'H': 1
   };
-
+  
+  // TODO: Keep track of the players hand via dynamic array
   interact.getCard = async () => {
     const choice = await ask(`Will you hit?`, (x) => {
       const choice = CHOICES[x];
