@@ -1,8 +1,5 @@
 'reach 0.1';
 
-const [isOutcome, B_WINS, DRAW, A_WINS] = makeEnum(3);
-const [isCard, ZERO, ONE, TWO] = makeEnum(3);
-
 // TODO: First 2 cards must be given automatically (new function)
 // TODO: Choose the winner according to the distance instead of sum
 const winner = (distA, distB) =>
@@ -15,8 +12,12 @@ const Player =
   getCard: Fun([], UInt),
   seeOutcome: Fun([UInt], Null),
   seeSum: Fun([Tuple(UInt,UInt)], Null),
-  informTimeout: Fun([], Null)
+  updateOpponentHand: Fun([UInt], Null),
+  informTimeout: Fun([], Null),
+  seeHand : Fun([Tuple(UInt,UInt)], Null),
+  setGame : Fun([],Tuple(UInt,UInt))
 };
+
 const Alice =
 {
   ...Player,
@@ -53,24 +54,34 @@ export const main =
       commit();
 
       A.only(() => { // Alice draws a card and commits
-        const _handA = interact.getCard();
-        const [_commitA, _saltA] = makeCommitment(interact, _handA);
+        const [_handA_First, _handA_Second] = interact.setGame();
+        const [_commitA, _saltA] = makeCommitment(interact, _handA_First);
         const commitA = declassify(_commitA);
+        const handA_Second  = declassify(_handA_Second);
       });
-      A.publish(commitA);
+      A.publish(commitA,handA_Second).timeout(DEADLINE, () => closeTo(B, informTimeout));
       commit();
 
-      unknowable(B, A(_handA, _saltA)); // Bob doesn't know Alice's card
+      
+      unknowable(B, A(_handA_First, _saltA)); // Bob doesn't know Alice's card
       B.only(() => { // Bob draws a card and commits
-        const _handB = interact.getCard();
-        const [_commitB, _saltB] = makeCommitment(interact, _handB);
+        const [_handB_First, _handB_Second] = interact.setGame();
+        const [_commitB, _saltB] = makeCommitment(interact, _handB_First);
         const commitB = declassify(_commitB);
+        const handB_Second  = declassify(_handB_Second);
       });
-      B.publish(commitB)
-        .timeout(DEADLINE, () => closeTo(A, informTimeout));
+      B.publish(commitB, handB_Second).timeout(DEADLINE, () => closeTo(A, informTimeout));
+   
+      A.only(() => {
+        interact.updateOpponentHand(handB_Second);
+      });
+
+      B.only(() => {
+        interact.updateOpponentHand(handA_Second);
+      });
 
       // Game loop starts
-      var [isOnA, isOnB, sumA, sumB] = [1, 1, 0, 0];
+      var [isOnA, isOnB, sumA, sumB] = [1, 1, handA_Second, handB_Second];
       invariant(balance() == 2 * wager);
       while (isOnA > 0 || isOnB > 0) {
         commit();
@@ -78,44 +89,59 @@ export const main =
         A.only(() => {
           const cardA = declassify(interact.getCard());
         });
-        A.publish(cardA);
+        A.publish(cardA).timeout(DEADLINE, () => closeTo(B, informTimeout));
         commit();
+
+        B.only(() => {
+          interact.updateOpponentHand(cardA);
+        });
 
         B.only(() => {
           const cardB = declassify(interact.getCard());
         });
-        B.publish(cardB);
+        B.publish(cardB).timeout(DEADLINE, () => closeTo(A, informTimeout));
 
+        A.only(() => {
+          interact.updateOpponentHand(cardB);
+        });
+ 
         [isOnA, isOnB, sumA, sumB] = [cardA, cardB, sumA + cardA, sumB + cardB];
         continue;
       }
       // Game loop ends
-     
-      const distA = (sumA>21 ?  2*(sumA-21):(21-sumA)) ;
-      const distB = (sumB>21 ?  2*(sumB-21):(21-sumB)) ;
-      const outcome = winner(distA, distB);
+
       commit();
       A.only(() => { // Alice is publishes hidden card
-        const [saltA, handA] = declassify([_saltA, _handA]);
+        const [saltA, handA_First] = declassify([_saltA, _handA_First]);
       });
-      A.publish(saltA, handA).timeout(DEADLINE, () => closeTo(B, informTimeout));
-      checkCommitment(commitA, saltA, handA);
+      A.publish(saltA, handA_First).timeout(DEADLINE, () => closeTo(B, informTimeout));
+      checkCommitment(commitA, saltA, handA_First);
       commit();
 
       B.only(() => { // Bob is publishes hidden card
-        const [saltB, handB] = declassify([_saltB, _handB]);
+        const [saltB, handB_First] = declassify([_saltB, _handB_First]);
       });
-      B.publish(saltB, handB).timeout(DEADLINE, () => closeTo(A, informTimeout));
-      checkCommitment(commitB, saltB, handB);
+      B.publish(saltB, handB_First).timeout(DEADLINE, () => closeTo(A, informTimeout));
+      checkCommitment(commitB, saltB, handB_First);
+
+      const totalA = sumA+handA_First;
+      const totalB = sumB+handB_First;
+      const distA = (totalA>21 ?  2*(totalA-21):(21-totalA)) ;
+      const distB = (totalB>21 ?  2*(totalB-21):(21-totalB)) ;
+      const outcome = winner(distA, distB);
 
       // TODO: transfer according to the winner
-      transfer(2*wager).to(outcome == 0 ? B : A);
-
+      const [forA, forB] =
+            outcome == 2 ? [2, 0] :
+            outcome == 0 ? [0, 2] :
+            [1, 1];
+      transfer(forA * wager).to(A);
+      transfer(forB * wager).to(B);
       commit();
 
       each([A, B], () => {
         interact.seeOutcome(outcome);
-        interact.seeSum([sumA, sumB]);
+        interact.seeSum([totalA, totalB]);
       });
 
       exit();});
