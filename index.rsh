@@ -1,14 +1,13 @@
 'reach 0.1';
 
-const [isHand, ROCK, PAPER, SCISSORS] = makeEnum(3);
 const [isOutcome, B_WINS, DRAW, A_WINS] = makeEnum(3);
 const [isCard, ZERO, ONE, TWO] = makeEnum(3);
 
 // TODO: First 2 cards must be given automatically (new function)
 // TODO: Choose the winner according to the distance instead of sum
-const winner = (sumA, sumB) =>
-  (sumA > sumB ? 2 : (sumA < sumB ? 0 : 1));
- 
+const winner = (distA, distB) =>
+   (distA<distB ? 2:(distB<distA ? 0:1))
+  
 const Player =
 {
   ...hasRandom,
@@ -91,8 +90,10 @@ export const main =
         continue;
       }
       // Game loop ends
-
-      const outcome = winner(sumA, sumB);
+     
+      const distA = (sumA>21 ?  2*(sumA-21):(21-sumA)) ;
+      const distB = (sumB>21 ?  2*(sumB-21):(21-sumB)) ;
+      const outcome = winner(distA, distB);
       commit();
       A.only(() => { // Alice is publishes hidden card
         const [saltA, handA] = declassify([_saltA, _handA]);
@@ -108,7 +109,7 @@ export const main =
       checkCommitment(commitB, saltB, handB);
 
       // TODO: transfer according to the winner
-      transfer(wager * 2).to(A);
+      transfer(2*wager).to(outcome == 0 ? B : A);
 
       commit();
 
@@ -116,5 +117,5 @@ export const main =
         interact.seeOutcome(outcome);
         interact.seeSum([sumA, sumB]);
       });
-      exit();
-    });
+
+      exit();});

@@ -1,8 +1,7 @@
 {
-  "name": "@reach-sh/tut-8",
+  "name": "@reach-sh/blackjack-reach-dapp",
   "type": "module",
   "dependencies": {
-    "@reach-sh/stdlib": ">=0.1.2-rc.4 <0.1.2-rc.9999"
   },
   "author": "reach.sh",
   "license": "Apache-2.0",
