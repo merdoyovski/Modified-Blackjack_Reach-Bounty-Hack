@@ -144,7 +144,7 @@ import { ask, yesno, done } from '@reach-sh/stdlib/ask.mjs';
     }
   }
 
-  interact.setGame =async () => { 
+  interact.setGame = async () => { 
     // Initial card distributions
     const card_one = Math.floor(Math.random() * 12)+1;
     const card_two = Math.floor(Math.random() * 12)+1;
@@ -153,6 +153,31 @@ import { ask, yesno, done } from '@reach-sh/stdlib/ask.mjs';
     yourHand.push(CARDS[card_two]);
     console.log(`You draw ${CARDS[card_one]} and ${CARDS[card_two]}`);
     return [card_one, card_two];
+  }
+
+  interact.changeTarget = async () => {
+    const choice = await ask(
+      `Would you like to change the target number?`,
+      yesno
+    );
+    if(choice == 1){
+      
+      const amt = await ask(
+        `How much do you want to add to your bet?`,
+        stdlib.parseCurrency
+      );
+      if (amt>0){
+        interact.wager = amt;
+        const randn = Math.floor(Math.random() * 12)+1;
+        return randn;
+      }else
+      {
+        return 0;
+      }
+    }else
+    {
+      return 0;
+    }
   }
 
   const OUTCOME = ['Bob wins', 'Draw', 'Alice wins'];
@@ -164,6 +189,10 @@ import { ask, yesno, done } from '@reach-sh/stdlib/ask.mjs';
   interact.seeSum = async (sum) => { 
     // Prints the total sum of each players hands
     console.log(`sumA: ${sum[0]}, sumB: ${sum[1]}`);
+  };
+  interact.seeNewTarget = async (target)  =>{
+    // Prints the new target number
+    console.log(`The new target number is ${target}`);
   };
 
   const part = isAlice ? backend.Alice : backend.Bob;

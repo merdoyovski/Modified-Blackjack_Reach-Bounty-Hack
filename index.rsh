@@ -11,7 +11,9 @@ const Player =
   seeSum: Fun([Tuple(UInt,UInt)], Null), // Total sum of each players hands
   updateOpponentHand: Fun([UInt], Null), // Send opponent's hand information to the frontend
   informTimeout: Fun([], Null),
-  setGame : Fun([],Tuple(UInt,UInt)) // Initial card distributions
+  setGame : Fun([],Tuple(UInt,UInt)), // Initial card distributions
+  changeTarget: Fun([], UInt),
+  seeNewTarget: Fun([UInt], Null)
 };
 
 const Alice =
@@ -81,8 +83,8 @@ export const main =
          Choosing STAND as an answer to getCard results in getting 0 thus isOn becomes 0.
          Loop ends when both players choose to STAND at the same turn.
          sumA: Whenever Alice draws a card, it is added to the sum to calculate the winner at the end.
-      */
-      var [isOnA, isOnB, sumA, sumB] = [1, 1, handA_Second, handB_Second];
+       * ***********************************************************************************/
+      var [isOnA, isOnB, sumA, sumB, target, newTarget, isAChanged, isBChanged] = [1, 1, handA_Second, handB_Second, 21, 0, false, false];
       invariant(balance() == 2 * wager);
       while (isOnA > 0 || isOnB > 0) {
         commit();
@@ -105,9 +107,37 @@ export const main =
         A.only(() => {
           interact.updateOpponentHand(cardB);
         });
- 
+        A.only(()=>{
+          const randnA = declassify(interact.changeTarget());
+          if(randnA >0){
+            newTarget = target + randnA;
+            isAChanged = true;
+          }
+        });
+        if (isAChanged){
+          commit();
+          A.publish(newTarget).timeout(DEADLINE, () => closeTo(B, informTimeout));
+          each([A, B], () => {
+            interact.seeNewTarget(newTarget);
+          });
+        }else{
+          B.only(()=>{
+            const randnB = declassify(interact.changeTarget());
+            if(randnB >0){
+              newTarget = target + randnB;
+              isBChanged = true; 
+            }
+          });
+          if (isBChanged){
+            commit();
+            B.publish(newTarget).timeout(DEADLINE, () => closeTo(B, informTimeout));
+            each([A, B], () => {
+              interact.seeNewTarget(newTarget);
+            });
+          }
+        }
         // As mentioned above, "isOnA = cardA" is used to terminate the loop when players choose to STAND.
-        [isOnA, isOnB, sumA, sumB] = [cardA, cardB, sumA + cardA, sumB + cardB];
+        [isOnA, isOnB, sumA, sumB, target, isAChanged,isBChanged] = [cardA, cardB, sumA + cardA, sumB + cardB, newTarget, false, false];
         continue;
       }
       // ******************************** Game Loop Ends ********************************
@@ -128,10 +158,8 @@ export const main =
       checkCommitment(commitB, saltB, handB_First);
 
       // Hidden cards are used to calculate the final results and determine the winner
-      const totalA = sumA+handA_First;
-      const totalB = sumB+handB_First;
-      const distA = (totalA>21 ?  2*(totalA-21):(21-totalA)) ;
-      const distB = (totalB>21 ?  2*(totalB-21):(21-totalB)) ;
+      const [totalA, totalB] = [sumA+handA_First, sumB+handB_First];
+      const [distA, distB] = [(totalA>target ?  2*(totalA-target):(target-totalA)), (totalB>target ?  2*(totalB-target):(target-totalB))];
       const outcome = winner(distA, distB);
 
       const [forA, forB] =
