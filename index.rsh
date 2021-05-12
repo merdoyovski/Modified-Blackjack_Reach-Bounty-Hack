@@ -1,21 +1,17 @@
 'reach 0.1';
 
-// TODO: First 2 cards must be given automatically (new function)
-// TODO: Choose the winner according to the distance instead of sum
 const winner = (distA, distB) =>
    (distA<distB ? 2:(distB<distA ? 0:1))
   
 const Player =
 {
   ...hasRandom,
-  //getHand: Fun([], UInt),
-  getCard: Fun([], UInt),
-  seeOutcome: Fun([UInt], Null),
-  seeSum: Fun([Tuple(UInt,UInt)], Null),
-  updateOpponentHand: Fun([UInt], Null),
+  getCard: Fun([], UInt), // Get a random card from the front end
+  seeOutcome: Fun([UInt], Null), // Print the outcome of the game
+  seeSum: Fun([Tuple(UInt,UInt)], Null), // Total sum of each players hands
+  updateOpponentHand: Fun([UInt], Null), // Send opponent's hand information to the frontend
   informTimeout: Fun([], Null),
-  seeHand : Fun([Tuple(UInt,UInt)], Null),
-  setGame : Fun([],Tuple(UInt,UInt))
+  setGame : Fun([],Tuple(UInt,UInt)) // Initial card distributions
 };
 
 const Alice =
@@ -53,18 +49,18 @@ export const main =
       B.pay(wager).timeout(DEADLINE, () => closeTo(A, informTimeout));
       commit();
 
-      A.only(() => { // Alice draws a card and commits
+      A.only(() => { // Alice draws 2 cards, hides 1 and publishes 1.
         const [_handA_First, _handA_Second] = interact.setGame();
         const [_commitA, _saltA] = makeCommitment(interact, _handA_First);
         const commitA = declassify(_commitA);
         const handA_Second  = declassify(_handA_Second);
       });
-      A.publish(commitA,handA_Second).timeout(DEADLINE, () => closeTo(B, informTimeout));
+      A.publish(commitA, handA_Second).timeout(DEADLINE, () => closeTo(B, informTimeout));
       commit();
 
       
-      unknowable(B, A(_handA_First, _saltA)); // Bob doesn't know Alice's card
-      B.only(() => { // Bob draws a card and commits
+       
+      B.only(() => { // Bob draws 2 cards, hides 1 and publishes 1.
         const [_handB_First, _handB_Second] = interact.setGame();
         const [_commitB, _saltB] = makeCommitment(interact, _handB_First);
         const commitB = declassify(_commitB);
@@ -72,27 +68,32 @@ export const main =
       });
       B.publish(commitB, handB_Second).timeout(DEADLINE, () => closeTo(A, informTimeout));
    
-      A.only(() => {
+      A.only(() => { // Alice updates front end with opponents published hand
         interact.updateOpponentHand(handB_Second);
       });
 
-      B.only(() => {
+      B.only(() => { // Bob updates front end with opponents published hand
         interact.updateOpponentHand(handA_Second);
       });
 
-      // Game loop starts
+      /* ******************************** Game Loop Starts ********************************
+         getCard(): asks for HIT or STAND. HIT gives a random card, STAND gives 0.
+         Choosing STAND as an answer to getCard results in getting 0 thus isOn becomes 0.
+         Loop ends when both players choose to STAND at the same turn.
+         sumA: Whenever Alice draws a card, it is added to the sum to calculate the winner at the end.
+      */
       var [isOnA, isOnB, sumA, sumB] = [1, 1, handA_Second, handB_Second];
       invariant(balance() == 2 * wager);
       while (isOnA > 0 || isOnB > 0) {
         commit();
 
-        A.only(() => {
+        A.only(() => { // Choose whether to HIT or STAND
           const cardA = declassify(interact.getCard());
         });
         A.publish(cardA).timeout(DEADLINE, () => closeTo(B, informTimeout));
         commit();
 
-        B.only(() => {
+        B.only(() => { // Bob updates front end again
           interact.updateOpponentHand(cardA);
         });
 
@@ -105,32 +106,34 @@ export const main =
           interact.updateOpponentHand(cardB);
         });
  
+        // As mentioned above, "isOnA = cardA" is used to terminate the loop when players choose to STAND.
         [isOnA, isOnB, sumA, sumB] = [cardA, cardB, sumA + cardA, sumB + cardB];
         continue;
       }
-      // Game loop ends
+      // ******************************** Game Loop Ends ********************************
 
       commit();
-      A.only(() => { // Alice is publishes hidden card
+
+      A.only(() => { // Alice publishes the hidden card
         const [saltA, handA_First] = declassify([_saltA, _handA_First]);
       });
       A.publish(saltA, handA_First).timeout(DEADLINE, () => closeTo(B, informTimeout));
       checkCommitment(commitA, saltA, handA_First);
       commit();
 
-      B.only(() => { // Bob is publishes hidden card
+      B.only(() => { // Bob publishes the hidden card
         const [saltB, handB_First] = declassify([_saltB, _handB_First]);
       });
       B.publish(saltB, handB_First).timeout(DEADLINE, () => closeTo(A, informTimeout));
       checkCommitment(commitB, saltB, handB_First);
 
+      // Hidden cards are used to calculate the final results and determine the winner
       const totalA = sumA+handA_First;
       const totalB = sumB+handB_First;
       const distA = (totalA>21 ?  2*(totalA-21):(21-totalA)) ;
       const distB = (totalB>21 ?  2*(totalB-21):(21-totalB)) ;
       const outcome = winner(distA, distB);
 
-      // TODO: transfer according to the winner
       const [forA, forB] =
             outcome == 2 ? [2, 0] :
             outcome == 0 ? [0, 2] :
