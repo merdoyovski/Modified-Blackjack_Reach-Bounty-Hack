@@ -13,8 +13,9 @@ const intToOutcome = ['Bob wins!', 'Draw!', 'Alice wins!'];
 const defaults = {defaultFundAmt: '10', defaultWager: '3', standartUnit};
 // Both hands are held in arrays, to be provided in front end.
 // opponentHand contains a "hidden" card as the first card is not published.
-var opponentHand = [0, 2,3 ];
-var myHand = [0, 2, 3];
+var opponentHand = [0];
+var myHand = [0];
+
 
 class App extends React.Component {
     constructor(props) {
@@ -66,8 +67,11 @@ class Player extends React.Component {
             var card = Math.floor(Math.random() * 12)+1;
             myHand.push(DECK[card]);
             hands.push((card>10 ? 10: card));
+
+            //mHand += card ;
         }
-        this.setState({view: 'SetGame',firstCard: myHand[0],secondCard: myHand[1]});
+        //this.setState({view: 'SetGame',firstCard: myHand[0],secondCard: myHand[1]});
+        this.setState({view: 'Wrapper', ContentView: Deployer, yourHand: myHand, enemyHand: opponentHand });
         return [hands[0], hands[1]];
     }
     seeOutcome(i) { this.setState({view: 'Done', outcome: intToOutcome[i]}); }
@@ -75,7 +79,11 @@ class Player extends React.Component {
     playHand(i) { this.state.resolveHandP(i ? myHand[myHand.length-1]:0); }// check here
     updateOpponentHand(i) {
         opponentHand.push(DECK[i]);
-        this.setState({view: 'SeeHands', myHand: myHand, opponentsHand: opponentHand});
+        console.log("opp hand");
+        console.log(DECK[i]);
+        console.log("opp hand");
+        this.setState({view: 'Wrapper', ContentView: Deployer, yourHand: myHand, enemyHand: opponentHand });
+        //this.setState({view: 'SeeHands', myHand: myHand, opponentsHand: opponentHand});
     }
     seeSum(sums) { this.setState({view: 'SeeSum', alice: sums[0], bob: sums[1]});}
   }

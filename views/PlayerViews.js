@@ -8,10 +8,11 @@ const exports = {};
 exports.Wrapper = class extends React.Component{
   render() {
     const {content} = this.props;
-      const {yourHand, enemyHand} = this.props;
+      const {yourHand, enemyHand} = this.props.content.props;
       
-      console.log(this.props);
-      console.log(enemyHand);
+      console.log(this.props.content.props);
+      console.log(yourHand);
+       console.log(yourHand);
       return(
           <div className="Deployer">
               Your hand is: 
@@ -111,6 +112,9 @@ exports.SeeSum = class extends React.Component{
 exports.SetGame = class extends React.Component{
     render(){
         const {firstCard, secondCard} = this.props;
+        console.log(0);
+        console.log(this.props);
+        console.log(0);
         return(
             <div>
             Your cards are: 
