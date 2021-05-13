@@ -13,8 +13,8 @@ const intToOutcome = ['Bob wins!', 'Draw!', 'Alice wins!'];
 const defaults = {defaultFundAmt: '10', defaultWager: '3', standartUnit};
 // Both hands are held in arrays, to be provided in front end.
 // opponentHand contains a "hidden" card as the first card is not published.
-var opponentHand = ['?'];
-var myHand = [];
+var opponentHand = [0, 2,3 ];
+var myHand = [0, 2, 3];
 
 class App extends React.Component {
     constructor(props) {
@@ -33,8 +33,14 @@ class App extends React.Component {
       this.setState({view: 'DeployerOrAttacher'});
     }
     async skipEntry() { this.setState({view: 'DeployerOrAttacher'}); }
-    selectAttacher() { this.setState({view: 'Wrapper', ContentView: Attacher, yourHand: myHand, enemyHand: opponentHand }); }
-    selectDeployer() { this.setState({view: 'Wrapper', ContentView: Deployer, yourHand: myHand, enemyHand: opponentHand }); }
+    selectAttacher() { 
+      console.log(myHand);
+      console.log(opponentHand);
+      this.setState({view: 'Wrapper', ContentView: Attacher, yourHand: myHand, enemyHand: opponentHand }); }
+    selectDeployer() { 
+      console.log(myHand);
+      console.log(opponentHand);
+      this.setState({view: 'Wrapper', ContentView: Deployer, yourHand: myHand, enemyHand: opponentHand }); }
     render() { return renderView(this, AppViews); }
   }
 

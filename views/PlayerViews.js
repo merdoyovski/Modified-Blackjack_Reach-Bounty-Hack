@@ -9,12 +9,15 @@ exports.Wrapper = class extends React.Component{
   render() {
     const {content} = this.props;
       const {yourHand, enemyHand} = this.props;
+      
+      console.log(this.props);
+      console.log(enemyHand);
       return(
           <div className="Deployer">
               Your hand is: 
-              <br/>{yourHand || "Unknown"}
+              <br/>{yourHand}
               <br/> Opponent hand is:
-              <br/>{enemyHand || "Unknown"}
+              <br/>{enemyHand}
               <br/>
               {content}
           </div>
