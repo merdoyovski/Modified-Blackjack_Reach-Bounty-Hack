@@ -1,49 +1,46 @@
 import React from 'react';
+import PlayerViews from './PlayerViews';
 
-const exports = {};
+const exports = {...PlayerViews};
 
-// Player views must be extended.
-// It does not have its own Wrapper view.
-
-exports.Wrapper = class extends React.Component{
+exports.Wrapper = class extends React.Component {
   render() {
     const {content} = this.props;
-      const {yourHand, enemyHand} = this.props;
+    return (
+      <div className="Game">
+        <h2>HELLOOO</h2>
+        {content}
+      </div>
+    );
+  }
+}
+
+exports.SeeHands = class extends React.Component{
+  render() {
+      const {myHand, opponentsHand} = this.props;
       return(
-          <div className="Deployer">
+          <div>
               Your hand is: 
-              <br/>{yourHand || "Unknown"}
+              <br/>{myHand || "Unknown"}
               <br/> Opponent hand is:
-              <br/>{enemyHand || "Unknown"}
-              <br/>
-              {content}
+              <br/>{opponentsHand || "Unknown"}
           </div>
-          
       );
   }
 }
 
-exports.GetCard = class extends React.Component {
-    render() {
-      const {parent, playable, hand} = this.props;
-      return (
-        <div>
-          {hand ? 'It was a draw! Pick again.' : ''}
-          <br />
-          {!playable ? 'Please wait...' : ''}
-          <br />
-          <button
-            disabled={!playable}
-            onClick={() => parent.playHand(1)}
-          >HIT</button>
-          <button
-            disabled={!playable}
-            onClick={() => parent.playHand(0)}
-          >STAND</button>
-        </div>
+exports.Drawing = class extends React.Component{
+  render() {
+      const {myHand} = this.props;
+      return(
+          <div>
+              Your hand is: 
+              <br/>{myHand || "Unknown"}
+          </div>
       );
-    }
   }
+}
+
 //Add funcs here
 exports.WaitingForResults = class extends React.Component {
   render() {
@@ -117,5 +114,6 @@ exports.SetGame = class extends React.Component{
         );
     }
 }
+
 
 export default exports;

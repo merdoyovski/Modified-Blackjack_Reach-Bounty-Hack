@@ -1,7 +1,8 @@
 import React from 'react';
 import PlayerViews from './PlayerViews';
+import GameViews from './GameViews';
 
-const exports = {...PlayerViews};
+const exports = {...PlayerViews, ...GameViews};
 
 exports.Wrapper = class extends React.Component {
   render() {
@@ -14,6 +15,20 @@ exports.Wrapper = class extends React.Component {
     );
   }
 }
+
+/* exports.Wrapper = class extends React.Component{
+  render() {
+      const {myHand, opponentsHand} = this.props;
+      return(
+          <div className="Attacher">
+              Your hand is: 
+              <br/>{myHand || "Unknown"}
+              <br/> Opponent hand is:
+              <br/>{opponentsHand || "Unknown"}
+          </div>
+      );
+  }
+} */
 
 exports.Attach = class extends React.Component {
   render() {

@@ -27,27 +27,26 @@ exports.ConnectAccount = class extends React.Component {
   }
 }
 
-exports.FundAccount = class extends React.Component {
+exports.Entry = class extends React.Component {
   render() {
     const {bal, standardUnit, defaultFundAmt, parent} = this.props;
     const amt = (this.state || {}).amt || defaultFundAmt;
     return (
       <div>
-        <h2>Fund account</h2>
+        <h2>Rules</h2>
+        <ul>
+              <li>Each player starts with 2 cards, first card is hidden from the other player and others are published.</li>
+              <li>The player whose total card values in hand is closest to 21 wins. From either side!</li>
+              <li>However, if the value of your hand is greater than 21 then your distance will be multiplied by 2.</li>
+              <li>i.e. if A got 20, B got 22: A wins because A is 1 away from 21 but B is (1*2) away from the 21.</li>
+              <li>Each player can either choose to HIT or STAND at each round</li>
+              <li>The game will end when both players choose to STAND</li>
+              <li>You can't count the cards as the game has an infinite supply of each card.</li>
+        </ul>
         <br />
         Balance: {bal} {standardUnit}
         <hr />
-        Would you like to fund your account with additional {standardUnit}?
-        <br />
-        (This only works on certain devnets)
-        <br />
-        <input
-          type='number'
-          placeholder={defaultFundAmt}
-          onChange={(e) => this.setState({amt: e.currentTarget.value})}
-        />
-        <button onClick={() => parent.fundAccount(amt)}>Fund Account</button>
-        <button onClick={() => parent.skipFundAccount()}>Skip</button>
+        <button onClick={() => parent.skipEntry()}>Start the Game</button>
       </div>
     );
   }

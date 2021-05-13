@@ -1,11 +1,12 @@
 import React from 'react';
 import PlayerViews from './PlayerViews';
+import GameViews from './GameViews';
 
-const exports = {...PlayerViews};
+const exports = {...PlayerViews, ...GameViews};
 
 const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
 
-exports.Wrapper = class extends React.Component {
+/* exports.Wrapper = class extends React.Component {
   render() {
     const {content} = this.props;
     return (
@@ -15,7 +16,23 @@ exports.Wrapper = class extends React.Component {
       </div>
     );
   }
-}
+} */
+exports.Wrapper = class extends React.Component{
+    render() {
+      const {content} = this.props;
+        const {myHand, opponentsHand} = this.props;
+        return(
+            <div className="Deployer">
+                Your hand is: 
+                <br/>{myHand || "Unknown"}
+                <br/> Opponent hand is:
+                <br/>{opponentsHand || "Unknown"}
+                {content}
+            </div>
+        );
+    }
+  }
+
 
 exports.SetWager = class extends React.Component {
   render() {
