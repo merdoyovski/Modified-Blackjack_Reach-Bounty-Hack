@@ -13,8 +13,8 @@ const intToOutcome = ['Bob wins!', 'Draw!', 'Alice wins!'];
 const defaults = {defaultFundAmt: '10', defaultWager: '3', standartUnit};
 // Both hands are held in arrays, to be provided in front end.
 // opponentHand contains a "hidden" card as the first card is not published.
-var opponentHand = [0];
-var myHand = [0];
+var opponentHand = ['?'];
+var myHand = [];
 
 
 class App extends React.Component {
@@ -37,11 +37,11 @@ class App extends React.Component {
     selectAttacher() { 
       console.log(myHand);
       console.log(opponentHand);
-      this.setState({view: 'Wrapper', ContentView: Attacher, yourHand: myHand, enemyHand: opponentHand }); }
+      this.setState({view: 'Wrapper', ContentView: Attacher}); }
     selectDeployer() { 
       console.log(myHand);
       console.log(opponentHand);
-      this.setState({view: 'Wrapper', ContentView: Deployer, yourHand: myHand, enemyHand: opponentHand }); }
+      this.setState({view: 'Wrapper', ContentView: Deployer}); }
     render() { return renderView(this, AppViews); }
   }
 
@@ -53,12 +53,12 @@ class Player extends React.Component {
     random() { return reach.hasRandom.random(); }
     async getCard() { // Fun([], UInt)
       var card = await new Promise(resolveHandP => {
-        this.setState({view: 'GetCard', playable: true, resolveHandP});
+        this.setState({view: 'GetCard', playable: true, resolveHandP, yourHand: myHand,enemyHand: opponentHand});
       });
       card = Math.floor(Math.random() * 12)+1;
       myHand.push(DECK[card]);
       card = (card > 10 ? 10:card);
-      this.setState({view: 'WaitingForResults', card});
+      this.setState({view: 'WaitingForResults', yourHand : myHand, enemyHand: opponentHand});
       return card;
     }
     async setGame() {

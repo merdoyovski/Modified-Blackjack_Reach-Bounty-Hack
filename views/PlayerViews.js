@@ -8,18 +8,9 @@ const exports = {};
 exports.Wrapper = class extends React.Component{
   render() {
     const {content} = this.props;
-      const {yourHand, enemyHand} = this.props.content.props;
-      
       console.log(this.props.content.props);
-      console.log(yourHand);
-       console.log(yourHand);
       return(
           <div className="Deployer">
-              Your hand is: 
-              <br/>{yourHand}
-              <br/> Opponent hand is:
-              <br/>{enemyHand}
-              <br/>
               {content}
           </div>
           
@@ -29,10 +20,13 @@ exports.Wrapper = class extends React.Component{
 
 exports.GetCard = class extends React.Component {
     render() {
-      const {parent, playable, hand} = this.props;
+      const {parent, playable, hand, yourHand, enemyHand} = this.props;
       return (
-        <div>
-          {hand ? 'It was a draw! Pick again.' : ''}
+        <div>            
+              Your hand is: 
+              <br/>{yourHand}
+              <br/> Opponent hand is:
+              <br/>{enemyHand}
           <br />
           {!playable ? 'Please wait...' : ''}
           <br />
@@ -51,9 +45,14 @@ exports.GetCard = class extends React.Component {
 //Add funcs here
 exports.WaitingForResults = class extends React.Component {
   render() {
+      const {yourHand, enemyHand}= this.props;
     return (
       <div>
-        Waiting for results...
+          Your hand is: 
+              <br/>{yourHand}
+              <br/> Opponent hand is:
+              <br/>{enemyHand}
+              <br /> Waiting for results... 
       </div>
     );
   }
