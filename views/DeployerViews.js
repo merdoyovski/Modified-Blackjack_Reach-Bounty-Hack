@@ -17,7 +17,7 @@ const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milli
     );
   }
 } */
-exports.Wrapper = class extends React.Component{
+/* exports.Wrapper = class extends React.Component{
     render() {
       const {content} = this.props;
         const {myHand, opponentsHand} = this.props;
@@ -31,7 +31,7 @@ exports.Wrapper = class extends React.Component{
             </div>
         );
     }
-  }
+  } */
 
 
 exports.SetWager = class extends React.Component {

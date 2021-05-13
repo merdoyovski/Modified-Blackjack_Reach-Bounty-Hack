@@ -4,7 +4,7 @@ import GameViews from './GameViews';
 
 const exports = {...PlayerViews, ...GameViews};
 
-exports.Wrapper = class extends React.Component {
+/* exports.Wrapper = class extends React.Component {
   render() {
     const {content} = this.props;
     return (
@@ -15,7 +15,7 @@ exports.Wrapper = class extends React.Component {
     );
   }
 }
-
+ */
 /* exports.Wrapper = class extends React.Component{
   render() {
       const {myHand, opponentsHand} = this.props;
