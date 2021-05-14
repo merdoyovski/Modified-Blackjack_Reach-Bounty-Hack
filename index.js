@@ -65,9 +65,9 @@ class Player extends React.Component {
       }
       else 
       {
+        this.setState({view: 'WaitingForResults', yourHand : myHand, enemyHand: opponentHand});
         return 0;
       }
-   
     }
     async setGame() {
         var hands = [];
@@ -75,11 +75,8 @@ class Player extends React.Component {
             var card = Math.floor(Math.random() * 12)+1;
             myHand.push(DECK[card]);
             hands.push(card);
-
-            //mHand += card ;
         }
-        //this.setState({view: 'SetGame',firstCard: myHand[0],secondCard: myHand[1]});
-        this.setState({view: 'Wrapper', ContentView: Deployer, yourHand: myHand, enemyHand: opponentHand });
+        this.setState({view: 'GetCard', playable :false,yourHand: myHand, enemyHand: opponentHand });
         return [hands[0], hands[1]];
     }
     seeOutcome(i) { this.setState({view: 'Done', outcome: intToOutcome[i], yourHand: myHand, enemyHand: opponentHand}); }
@@ -91,9 +88,7 @@ class Player extends React.Component {
         opponentHand.push(DECK[i]);
         console.log("opp hand");
         console.log(DECK[i]);
-        console.log("opp hand");
-        this.setState({view: 'Wrapper', ContentView: Deployer, yourHand: myHand, enemyHand: opponentHand });
-        //this.setState({view: 'SeeHands', myHand: myHand, opponentsHand: opponentHand});
+        this.setState({view: 'WaitingForResults', yourHand : myHand, enemyHand: opponentHand});
     }
     seeSum(sums) { this.setState({view: 'SeeSum', alice: sums[0], bob: sums[1]});}
   }

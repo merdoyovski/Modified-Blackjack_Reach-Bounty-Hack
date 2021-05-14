@@ -20,7 +20,7 @@ exports.Wrapper = class extends React.Component{
 
 exports.GetCard = class extends React.Component {
     render() {
-      const {parent, playable, hand, yourHand, enemyHand} = this.props;
+      const {parent, playable, yourHand, enemyHand} = this.props;
       return (
         <div>            
               Your hand is: 
