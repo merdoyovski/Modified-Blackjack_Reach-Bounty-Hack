@@ -61,16 +61,17 @@ exports.WaitingForResults = class extends React.Component {
 exports.Done = class extends React.Component {
   render() {
     const {outcome} = this.props;
-    const {yourHand, enemyHand}= this.props;
+    const {yourHand, enemyHand, bal, standardUnit}= this.props;
     return (
       <div>
                Your hand is: 
               <br/>{yourHand}
               <br/> Opponent hand is:
               <br/>{enemyHand}
-              <br /> Waiting for results... 
-        Thank you for playing. The outcome of this game was:
+              <br /> Thank you for playing. The outcome of this game was:
         <br />{outcome || 'Unknown'}
+        <br />
+        Balance: {bal} {standardUnit}
       </div>
     );
   }

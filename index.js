@@ -52,20 +52,29 @@ class Player extends React.Component {
   }
     random() { return reach.hasRandom.random(); }
     async getCard() { // Fun([], UInt)
+        var oppStr = "";
+        opponentHand.forEach(element => {
+            oppStr = oppStr +" "+element;
+            
+        });
+        var myStr = ""; 
+        myHand.forEach(element => {
+            myStr = myStr +" "+element;
+        });
       var card = await new Promise(resolveHandP => {
-        this.setState({view: 'GetCard', playable: true, resolveHandP, yourHand: myHand,enemyHand: opponentHand});
+        this.setState({view: 'GetCard', playable: true, resolveHandP, yourHand: myStr,enemyHand: oppStr});
       });
       if(card==1)
       {
         card = Math.floor(Math.random() * 12)+1;
         myHand.push(DECK[card]);
         card = (card > 10 ? 10:card);
-        this.setState({view: 'WaitingForResults', yourHand : myHand, enemyHand: opponentHand});
+        this.setState({view: 'WaitingForResults', yourHand : myStr + " "+myHand[myHand.length-1], enemyHand: oppStr});
         return card;
       }
       else 
       {
-        this.setState({view: 'WaitingForResults', yourHand : myHand, enemyHand: opponentHand});
+        this.setState({view: 'WaitingForResults', yourHand : myStr, enemyHand: oppStr});
         return 0;
       }
     }
@@ -76,19 +85,62 @@ class Player extends React.Component {
             myHand.push(DECK[card]);
             hands.push(card);
         }
-        this.setState({view: 'GetCard', playable :false,yourHand: myHand, enemyHand: opponentHand });
+        var oppStr = "";
+        opponentHand.forEach(element => {
+            oppStr = oppStr +" "+element;
+            
+        });
+        var myStr = ""; 
+        myHand.forEach(element => {
+            myStr = myStr +" "+element;
+        });
+        this.setState({view: 'GetCard', playable :false,yourHand: myStr, enemyHand: oppStr });
         return [hands[0], hands[1]];
     }
-    seeOutcome(i) { this.setState({view: 'Done', outcome: intToOutcome[i], yourHand: myHand, enemyHand: opponentHand}); }
+    async seeOutcome(i) { 
+        var oppStr = "";
+        opponentHand.forEach(element => {
+            switch (element) {
+                case '?':
+                    oppStr = oppStr +" "+opponentHand[opponentHand.length-1];
+                    break;
+                case opponentHand[opponentHand.length-1]:
+                    break;
+                default:
+                    oppStr = oppStr +" "+element;
+                    break;
+            }
+        });
+        var myStr = ""; 
+        myHand.forEach(element => {
+            myStr = myStr +" "+element;
+        });
+        const acc = await reach.getDefaultAccount();
+        const balAtomic = await reach.balanceOf(acc);
+        const balance = reach.formatCurrency(balAtomic, 4);
+        this.setState({view: 'Done', outcome: intToOutcome[i], yourHand: myStr, enemyHand: oppStr, bal: balance, standartUnit :defaults[2]}); 
+    }
     informTimeout() { this.setState({view: 'Timeout'}); }
     playHand(i) { 
       this.state.resolveHandP(i ? 1:0); 
     }// check here
     updateOpponentHand(i) {
-        opponentHand.push(DECK[i]);
-        console.log("opp hand");
-        console.log(DECK[i]);
-        this.setState({view: 'WaitingForResults', yourHand : myHand, enemyHand: opponentHand});
+        if (i>0) {
+            opponentHand.push(DECK[i]);
+            console.log("opp hand");
+            console.log(DECK[i]);
+        }
+        var oppStr = "";
+        opponentHand.forEach(element => {
+
+            oppStr = oppStr +" "+element;
+            
+        });
+        var myStr = ""; 
+        myHand.forEach(element => {
+            myStr = myStr +" "+element;
+        });
+        this.setState({view: 'WaitingForResults', yourHand : myStr, enemyHand: oppStr});
     }
     seeSum(sums) { this.setState({view: 'SeeSum', alice: sums[0], bob: sums[1]});}
   }
