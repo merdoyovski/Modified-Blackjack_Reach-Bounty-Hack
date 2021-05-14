@@ -8,10 +8,12 @@ const Player =
   ...hasRandom,
   getCard: Fun([], UInt), // Get a random card from the front end
   seeOutcome: Fun([UInt], Null), // Print the outcome of the game
-  seeSum: Fun([Tuple(UInt,UInt)], Null), // Total sum of each players hands
+  seeSum: Fun([Array(UInt,2)], Null), // Total sum of each players hands
   updateOpponentHand: Fun([UInt], Null), // Send opponent's hand information to the frontend
   informTimeout: Fun([], Null),
-  setGame : Fun([],Tuple(UInt,UInt)) // Initial card distributions
+  setGame : Fun([],Tuple(UInt,UInt)), // Initial card distributions
+  revelLastCard: Fun([UInt], Null),
+  getResultView: Fun([], Null)
 };
 
 const Alice =
@@ -36,6 +38,11 @@ export const main =
           interact.informTimeout();
         });
       };
+
+      function CardValue(i){
+        return i < 10 ? i : 10;
+      }
+      
 
       A.only(() => { // Alice pays and publishes the wager
         const wager = declassify(interact.wager);
@@ -82,7 +89,7 @@ export const main =
          Loop ends when both players choose to STAND at the same turn.
          sumA: Whenever Alice draws a card, it is added to the sum to calculate the winner at the end.
       */
-      var [isOnA, isOnB, sumA, sumB] = [1, 1, handA_Second, handB_Second];
+      var [isOnA, isOnB, sumA, sumB, ACEcountA, ACEcountB] = [1, 1, CardValue(handA_Second), CardValue(handB_Second), 0, 0];
       invariant(balance() == 2 * wager);
       while (isOnA > 0 || isOnB > 0) {
         commit();
@@ -97,6 +104,8 @@ export const main =
           interact.updateOpponentHand(cardA);
         });
 
+        // TODO: Disable getCard after STAND
+        
         B.only(() => {
           const cardB = declassify(interact.getCard());
         });
@@ -106,15 +115,37 @@ export const main =
           interact.updateOpponentHand(cardB);
         });
  
-        // As mentioned above, "isOnA = cardA" is used to terminate the loop when players choose to STAND.
-        [isOnA, isOnB, sumA, sumB] = [cardA, cardB, sumA + cardA, sumB + cardB];
+        if(cardA == 1 && cardB == 1){
+          [isOnA, isOnB, sumA, sumB, ACEcountA, ACEcountB] = [CardValue(cardA), CardValue(cardB), sumA , sumB, ACEcountA +1, ACEcountB+1 ];
         continue;
+        }
+        else if(cardA == 1){
+          [isOnA, isOnB, sumA, sumB, ACEcountA, ACEcountB] = [CardValue(cardA), CardValue(cardB), sumA, sumB + CardValue(cardB), ACEcountA + 1, ACEcountB];
+          continue;
+        }
+        else if(cardB == 1){
+          [isOnA, isOnB, sumA, sumB, ACEcountA, ACEcountB] = [CardValue(cardA), CardValue(cardB), sumA, sumB + CardValue(cardB), ACEcountA, ACEcountB+1];
+          continue;
+        }
+        else{
+          [isOnA, isOnB, sumA, sumB, ACEcountA, ACEcountB] = [CardValue(cardA), CardValue(cardB), sumA + CardValue(cardA), sumB + CardValue(cardB), ACEcountA, ACEcountB];
+          continue;
+        }  
+        // As mentioned above, "isOnA = cardA" is used to terminate the loop when players choose to STAND.
+        //[isOnA, isOnB, sumA, sumB] = [CardValue(cardA), CardValue(cardB), sumA + CardValue(cardA), sumB + CardValue(cardB)];
+        //[isOnA, isOnB, sumA, sumB, AScountA, AScountB] = [CardValue(cardA), CardValue(cardB), sumA, sumB + CardValue(cardB), AScountA + 1, AScountB];
+        //[isOnA, isOnB, sumA, sumB, AScountA, AScountB] = [CardValue(cardA), CardValue(cardB), sumA, sumB + CardValue(cardB), AScountA, AScountB+1];
+        //[isOnA, isOnB, sumA, sumB, AScountA, AScountB] = [CardValue(cardA), CardValue(cardB), sumA + CardValue(cardA), sumB + CardValue(cardB), AScountA, AScountB];
+        //continue;
       }
       // ******************************** Game Loop Ends ********************************
 
       commit();
 
+
+
       A.only(() => { // Alice publishes the hidden card
+        interact.getResultView();
         const [saltA, handA_First] = declassify([_saltA, _handA_First]);
       });
       A.publish(saltA, handA_First).timeout(DEADLINE, () => closeTo(B, informTimeout));
@@ -122,14 +153,34 @@ export const main =
       commit();
 
       B.only(() => { // Bob publishes the hidden card
+        interact.getResultView();
         const [saltB, handB_First] = declassify([_saltB, _handB_First]);
       });
       B.publish(saltB, handB_First).timeout(DEADLINE, () => closeTo(A, informTimeout));
       checkCommitment(commitB, saltB, handB_First);
 
+      
+      
+      // Calculate optimal total from Ace count
+      if(handA_First == 1){
+        const c_ACEcountA = ACEcountA+1;
+      }
+      else{
+        const c_ACEcountA = ACEcountA;
+      }
+      if(handB_First == 1){
+        const c_ACEcountB = ACEcountB+1;
+      }
+      else{
+        const c_ACEcountB = ACEcountB;
+      }
+
+
+
+
       // Hidden cards are used to calculate the final results and determine the winner
-      const totalA = sumA+handA_First;
-      const totalB = sumB+handB_First;
+      const totalA = sumA + CardValue(handA_First);
+      const totalB = sumB + CardValue(handB_First);
       const distA = (totalA>21 ?  2*(totalA-21):(21-totalA)) ;
       const distB = (totalB>21 ?  2*(totalB-21):(21-totalB)) ;
       const outcome = winner(distA, distB);
@@ -142,9 +193,20 @@ export const main =
       transfer(forB * wager).to(B);
       commit();
 
+      A.only(() => { // Bob publishes the hidden card
+        interact.revelLastCard(handB_First);
+      });
+      
+      B.only(() => { // Bob publishes the hidden card
+        interact.revelLastCard(handA_First);
+      });
+
+      const results = array(UInt, [totalA, totalB]); 
+
       each([A, B], () => {
         interact.seeOutcome(outcome);
-        interact.seeSum([totalA, totalB]);
+        
+        //interact.seeSum(results);
       });
 
       exit();});
