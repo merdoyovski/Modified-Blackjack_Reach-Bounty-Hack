@@ -55,18 +55,26 @@ class Player extends React.Component {
       var card = await new Promise(resolveHandP => {
         this.setState({view: 'GetCard', playable: true, resolveHandP, yourHand: myHand,enemyHand: opponentHand});
       });
-      card = Math.floor(Math.random() * 12)+1;
-      myHand.push(DECK[card]);
-      card = (card > 10 ? 10:card);
-      this.setState({view: 'WaitingForResults', yourHand : myHand, enemyHand: opponentHand});
-      return card;
+      if(card==1)
+      {
+        card = Math.floor(Math.random() * 12)+1;
+        myHand.push(DECK[card]);
+        card = (card > 10 ? 10:card);
+        this.setState({view: 'WaitingForResults', yourHand : myHand, enemyHand: opponentHand});
+        return card;
+      }
+      else 
+      {
+        return 0;
+      }
+   
     }
     async setGame() {
         var hands = [];
         for (let index = 0; index < 2; index++) {
             var card = Math.floor(Math.random() * 12)+1;
             myHand.push(DECK[card]);
-            hands.push((card>10 ? 10: card));
+            hands.push(card);
 
             //mHand += card ;
         }
@@ -74,9 +82,11 @@ class Player extends React.Component {
         this.setState({view: 'Wrapper', ContentView: Deployer, yourHand: myHand, enemyHand: opponentHand });
         return [hands[0], hands[1]];
     }
-    seeOutcome(i) { this.setState({view: 'Done', outcome: intToOutcome[i]}); }
+    seeOutcome(i) { this.setState({view: 'Done', outcome: intToOutcome[i], yourHand: myHand, enemyHand: opponentHand}); }
     informTimeout() { this.setState({view: 'Timeout'}); }
-    playHand(i) { this.state.resolveHandP(i ? myHand[myHand.length-1]:0); }// check here
+    playHand(i) { 
+      this.state.resolveHandP(i ? 1:0); 
+    }// check here
     updateOpponentHand(i) {
         opponentHand.push(DECK[i]);
         console.log("opp hand");

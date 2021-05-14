@@ -92,22 +92,25 @@ export const main =
         });
         A.publish(cardA).timeout(DEADLINE, () => closeTo(B, informTimeout));
         commit();
+        const cardA_value = (cardA>10 ? 10: cardA);
 
         B.only(() => { // Bob updates front end again
-          interact.updateOpponentHand(cardA);
+          interact.updateOpponentHand(cardA_value);
         });
 
+        
         B.only(() => {
           const cardB = declassify(interact.getCard());
         });
         B.publish(cardB).timeout(DEADLINE, () => closeTo(A, informTimeout));
+        const cardB_value = (cardB>10 ? 10: cardB);
 
         A.only(() => {
-          interact.updateOpponentHand(cardB);
+          interact.updateOpponentHand(cardB_value);
         });
  
         // As mentioned above, "isOnA = cardA" is used to terminate the loop when players choose to STAND.
-        [isOnA, isOnB, sumA, sumB] = [cardA, cardB, sumA + cardA, sumB + cardB];
+        [isOnA, isOnB, sumA, sumB] = [cardA_value, cardB_value, sumA + cardA_value, sumB + cardB_value];
         continue;
       }
       // ******************************** Game Loop Ends ********************************
@@ -142,9 +145,18 @@ export const main =
       transfer(forB * wager).to(B);
       commit();
 
+      A.only(() => { // Bob publishes the hidden card
+        interact.updateOpponentHand(handB_First);
+      });
+      
+      B.only(() => { // Bob publishes the hidden card
+        interact.updateOpponentHand(handA_First);
+      });
+
       each([A, B], () => {
         interact.seeOutcome(outcome);
-        interact.seeSum([totalA, totalB]);
+        
+        //interact.seeSum([totalA, totalB]);
       });
 
       exit();});
