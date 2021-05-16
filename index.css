@@ -68,6 +68,10 @@ button {
   border-color: black;
   width: calc(15px +2vmin);
 }
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .Hit{
   font-size: calc(10px + 2vmin);
@@ -90,11 +94,6 @@ button {
 }
 textarea {
   font-size: calc(10px + 2vmin);
-}
-
-.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .ContractInfo {
