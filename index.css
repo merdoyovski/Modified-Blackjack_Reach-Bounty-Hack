@@ -13,23 +13,47 @@ code {
 }
 .App {
   text-align: center;
+  background-color: lightblue;
 }
 
 .App-header {
-  background-color: #282c34;
-  background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Blackjack_board.JPG/1200px-Blackjack_board.JPG");
+  background-color: #ffffff;
+  background-image: url("https://xe88agent.com/blog/wp-content/uploads/2020/08/Download-Live22-Slot-Game.jpg");
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: black;
+  color: white;
+  background-color: #f1f1f1;
 }
 
 .App-link {
   color: #61dafb;
+  border: 10px solid #999;
+  border-radius: 4px;
 }
+
+.Deployer{
+  border: 4px solid rgb(185, 15, 15);
+  border-radius: 4px;
+}
+
+.Rules{
+  background-color:white;
+  color: black;
+  border: 4px solid rgb(185, 15, 15);
+  border-radius: 4px;
+}
+
+.Game{
+  background-color: #ffffff;
+  border: 4px solid rgb(185, 15, 15);
+  color: black;
+  border-radius: 4px;
+}
+
 
 input[type=number] {
   font-size: calc(10px + 2vmin);
@@ -38,10 +62,39 @@ input[type=number] {
 
 button {
   font-size: calc(10px + 2vmin);
+  background-color: gray;
+  color: black;
+  border-radius:4px;
+  border-color: black;
+  width: calc(15px +2vmin);
 }
 
+.Hit{
+  font-size: calc(10px + 2vmin);
+  background-color: rgb(17, 87, 17);
+  color : black;
+  border-radius: 4px;
+  border-color: rgb(17, 87, 17);
+  padding: 15px 32px;
+  width: calc(15px +2vmin);
+}
+
+.Stand{
+  font-size: calc(10px + 2vmin);
+  background-color:rgb(185, 15, 15);
+  color : black;
+  border-radius: 4px;
+  border-color: rgb(185, 15, 15);
+  padding: 15px 32px;
+  width: calc(15px +2vmin);
+}
 textarea {
   font-size: calc(10px + 2vmin);
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .ContractInfo {
