@@ -16,24 +16,7 @@ const defaults = { defaultFundAmt: '10', defaultWager: '3', standartUnit };
 var opponentHand = ["?"];
 var myHand = [];
 
-function getKeyByValue(object, value) {
-  return Object.keys(object).find(key => object[key] === value);
-}
-
-function getHandValue(hand){
-  var sum = 0;
-  hand.forEach(element => {
-    var value = parseInt(getKeyByValue(DECK, element));
-    console.log("Hand values by card: ");
-    console.log(value);
-    console.log(typeof value);
-    value = value > 10 ? 10 : value;
-    sum += value;
-    console.log(sum);
-    console.log(typeof sum);
-  });
-  return sum;
-}
+ 
 
 class App extends React.Component {
   constructor(props) {
@@ -53,16 +36,13 @@ class App extends React.Component {
   }
   async skipEntry() { this.setState({ view: 'DeployerOrAttacher' }); }
   selectAttacher() {
-    console.log(myHand);
-    console.log(opponentHand);
     this.setState({ view: 'Wrapper', ContentView: Attacher });
   }
   selectDeployer() {
-    console.log(myHand);
-    console.log(opponentHand);
     this.setState({ view: 'Wrapper', ContentView: Deployer });
   }
   render() { return renderView(this, AppViews); }
+
 }
 
 class Player extends React.Component {
@@ -102,39 +82,34 @@ class Player extends React.Component {
     this.setState({ view: 'GetCard', playable: false, yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "),  waitForOpp: false, dealCards: true, getOpp: false, publishYourCard: false, getResults: false});
     return [hands[0], hands[1]];
   }
-  async seeOutcome(i) {
 
+  async seeOutcome(i, _sumA, _sumB) {
     const acc = await reach.getDefaultAccount();
     const balAtomic = await reach.balanceOf(acc);
     const balance = reach.formatCurrency(balAtomic, 4);
-    const sumA = getHandValue(myHand);
-    const sumB = getHandValue(opponentHand);
+    const sumA = parseInt(_sumA);
+    const sumB = parseInt(_sumB);
+   
     this.setState({ view: 'Done', outcome: intToOutcome[i], yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), bal: balance, standartUnit: defaults[2], sumA, sumB });
   }
   informTimeout() { this.setState({ view: 'Timeout' }); }
   playHand(i) {
     this.state.resolveHandP(i ? 1 : 0);
-  }// check here
+  }
   updateOpponentHand(i) {
     if (i != 0) {
       opponentHand.push(DECK[i]);
     }
     this.setState({ view: 'GetCard', yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), playable: false,  waitForOpp: true, dealCards: false, getOpp: false, publishYourCard: false, getResults: false});
   }
-  seeSum(sums) {
- /*    console.log("Type of sums is:");
-    console.log(typeof sums);
-    console.log(sums); // todo THis. also bugs in hand formatting.
-    console.log(Object.keys(sums)); 
-    const resultObj = Object.values(sums)
-    const resultInt = [resultObj[0], resultObj[1]];
-    this.setState({ view: 'SeeSum', sum: resultInt }); */
-  }
   revelLastCard(card) {
     opponentHand[0] = DECK[card];
   }
   getResultView(){
     this.setState({ view: 'GetCard', yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), playable: false,  waitForOpp: false, dealCards: false, getOpp: false, publishYourCard: false, getResults: true});
+  }
+  printThis(toPrint){
+    console.log(toPrint);
   }
 }
 

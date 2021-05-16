@@ -8,7 +8,6 @@ const exports = {};
 exports.Wrapper = class extends React.Component{
   render() {
     const {content} = this.props;
-      console.log(this.props.content.props);
       return(
           <div className="Deployer">
  {content}
@@ -129,9 +128,6 @@ exports.SeeSum = class extends React.Component{
 exports.SetGame = class extends React.Component{
     render(){
         const {firstCard, secondCard} = this.props;
-        console.log(0);
-        console.log(this.props);
-        console.log(0);
         return(
             <div>
             Your cards are: 
