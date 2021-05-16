@@ -8,7 +8,7 @@ exports.Wrapper = class extends React.Component {
     return (
       <div className="App">
         <header className="App-header" id="root">
-          <h1>Asymetric Blackjack</h1>
+          <h1>Asymmetric Blackjack</h1>
           {content}
         </header>
       </div>
@@ -19,7 +19,7 @@ exports.Wrapper = class extends React.Component {
 exports.ConnectAccount = class extends React.Component {
   render() {
     return (
-      <div>
+        <div className="Game">
         Please wait while we connect to your account.
         If this takes more than a few seconds, there may be something wrong.
       </div>
@@ -30,7 +30,6 @@ exports.ConnectAccount = class extends React.Component {
 exports.Entry = class extends React.Component {
   render() {
     const {bal, standardUnit, defaultFundAmt, parent} = this.props;
-    const amt = (this.state || {}).amt || defaultFundAmt;
     return (
       <div className="Rules">
         <h2>Rules</h2>

@@ -9,14 +9,12 @@ import * as reach from '@reach-sh/stdlib/ETH';
 
 const DECK = { 1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K' };
 const { standartUnit } = reach;
-const intToOutcome = ['Bob wins!', 'Draw!', 'Alice wins!'];
 const defaults = { defaultFundAmt: '10', defaultWager: '3', standartUnit };
 // Both hands are held in arrays, to be provided in front end.
 // opponentHand contains a "hidden" card as the first card is not published.
 var opponentHand = ["?"];
 var myHand = [];
-
- 
+var Who = 1;
 
 class App extends React.Component {
   constructor(props) {
@@ -89,8 +87,9 @@ class Player extends React.Component {
     const balance = reach.formatCurrency(balAtomic, 4);
     const sumA = parseInt(_sumA);
     const sumB = parseInt(_sumB);
+
    
-    this.setState({ view: 'Done', outcome: intToOutcome[i], yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), bal: balance, standartUnit: defaults[2], sumA, sumB });
+    this.setState({ view: 'Done', outcome: (i==Who ? "You won the game":(i == 1 ? "Draw":"Opponent won the game")), yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), bal: balance, standartUnit: defaults[2],  sumA:(Who == 2 ? sumA:sumB ), sumB:(Who== 0 ? sumA:sumB ) });
   }
   informTimeout() { this.setState({ view: 'Timeout' }); }
   playHand(i) {
@@ -125,6 +124,7 @@ class Deployer extends Player {
     this.wager = reach.parseCurrency(this.state.wager); // UInt
     backend.Alice(ctc, this);
     const ctcInfoStr = JSON.stringify(await ctc.getInfo(), null, 2);
+    Who = 2;
     this.setState({ view: 'WaitingForAttacher', ctcInfoStr });
   }
   render() { return renderView(this, DeployerViews); }
@@ -137,6 +137,7 @@ class Attacher extends Player {
   }
   attach(ctcInfoStr) {
     const ctc = this.props.acc.attach(backend, JSON.parse(ctcInfoStr));
+    Who = 0;
     this.setState({ view: 'Attaching' });
     backend.Bob(ctc, this);
   }

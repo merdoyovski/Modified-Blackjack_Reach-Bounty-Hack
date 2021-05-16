@@ -39,7 +39,7 @@ exports.SetWager = class extends React.Component {
     const {parent, defaultWager, standardUnit} = this.props;
     const wager = (this.state || {}).wager || defaultWager;
     return (
-      <div>
+      <div className="Game">
         <input
           type='number'
           placeholder={defaultWager}
@@ -58,7 +58,7 @@ exports.Deploy = class extends React.Component {
   render() {
     const {parent, wager, standardUnit} = this.props;
     return (
-      <div>
+      <div className="Game">
         Wager (pay to deploy): <strong>{wager}</strong> {standardUnit}
         <br />
         <button
@@ -72,7 +72,7 @@ exports.Deploy = class extends React.Component {
 exports.Deploying = class extends React.Component {
   render() {
     return (
-      <div>Deploying... please wait.</div>
+      <div className="Game">Deploying... please wait.</div>
     );
   }
 }
@@ -92,7 +92,7 @@ exports.WaitingForAttacher = class extends React.Component {
   render() {
     const {ctcInfoStr} = this.props;
     return (
-      <div>
+      <div className="Game">
         Waiting for Attacher to join...
         <br /> Please give them this contract info:
         <pre className='ContractInfo'>

@@ -10,10 +10,8 @@ exports.Wrapper = class extends React.Component{
     const {content} = this.props;
       return(
           <div className="Deployer">
- {content}
-            
-          </div>
-          
+            {content}   
+          </div>    
       );
   }
 }
@@ -22,7 +20,7 @@ exports.GetCard = class extends React.Component {
     render() {
       const {parent, playable, yourHand, enemyHand, waitForOpp, dealCards, getOpp, publishYourCard, getResults} = this.props;
       return (
-        <div>            
+        <div className="Game">            
               Your hand is: 
               <br/>{yourHand}
               <br/> Opponent hand is:
@@ -34,12 +32,12 @@ exports.GetCard = class extends React.Component {
           (publishYourCard? "Publishing your cards":
           (getResults ? "Game is over. Getting the results.":
           "Make your choice")))))}
-          <br />
-          <button
+          <br/>
+          <button className="Hit"
             disabled={!playable}
             onClick={() => parent.playHand(1)}
           >HIT</button>
-          <button
+          <button className="Stand"
             disabled={!playable}
             onClick={() => parent.playHand(0)}
           >STAND</button>
@@ -52,7 +50,7 @@ exports.WaitingForResults = class extends React.Component {
   render() {
       const {yourHand, enemyHand}= this.props;
     return (
-      <div>
+        <div className="Game"> 
           Your hand is: 
               <br/>{yourHand}
               <br/> Opponent hand is:
@@ -68,17 +66,17 @@ exports.Done = class extends React.Component {
     const {outcome} = this.props;
     const {yourHand, enemyHand, bal, standardUnit, sumA, sumB}= this.props;
     return (
-      <div>
+        <div className="Game"> 
                Your hand is: 
               <br/>{yourHand}
               <br/> Opponent hand is:
               <br/>{enemyHand}
-              <br /> Thank you for playing. The outcome of this game was:
+              <br /> Thank you for playing.
         <br />{outcome || 'Unknown'}
         <br />
-        Sum of Alice's cards: 
+        Sum of your cards: 
                 <br/>{sumA || "Unknown"}
-                <br/> Sum of Bob's cards:
+                <br/> Sum of opponents cards:
                 <br/>{sumB  || "Unknown"}
         <br />
         Balance: {bal} {standardUnit}
@@ -90,7 +88,7 @@ exports.Done = class extends React.Component {
 exports.Timeout = class extends React.Component {
   render() {
     return (
-      <div>
+        <div className="Game"> 
         There's been a timeout. (Someone took too long.)
       </div>
     );
@@ -101,7 +99,7 @@ exports.SeeHands = class extends React.Component{
     render() {
         const {myHand, opponentsHand} = this.props;
         return(
-            <div>
+            <div className="Game"> 
                 Your hand is: 
                 <br/>{myHand || "Unknown"}
                 <br/> Opponent hand is:
@@ -115,7 +113,7 @@ exports.SeeSum = class extends React.Component{
     render(){
         const {sum} = this.props;
         return(
-            <div>
+            <div className="Game"> 
                 Sum of Alice's cards: 
                 <br/>{sum[0] || "Unknown"}
                 <br/> Sum of Bob's cards:
@@ -129,7 +127,7 @@ exports.SetGame = class extends React.Component{
     render(){
         const {firstCard, secondCard} = this.props;
         return(
-            <div>
+            <div className="Game"> 
             Your cards are: 
             <br/>{ firstCard} 
             , {secondCard}

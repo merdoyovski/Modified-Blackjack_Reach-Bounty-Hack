@@ -35,7 +35,7 @@ exports.Attach = class extends React.Component {
     const {parent} = this.props;
     const {ctcInfoStr} = this.state || {};
     return (
-      <div>
+      <div className="Game">
         Please paste the contract info to attach to:
         <br />
         <textarea spellcheck="false"
@@ -56,7 +56,7 @@ exports.Attach = class extends React.Component {
 exports.Attaching = class extends React.Component {
   render() {
     return (
-      <div>
+      <div className="Game">
         Attaching, please wait...
       </div>
     );
@@ -68,7 +68,7 @@ exports.AcceptTerms = class extends React.Component {
     const {wager, standardUnit, parent} = this.props;
     const {disabled} = this.state || {};
     return (
-      <div>
+      <div className="Game">
         The terms of the game are:
         <br /> Wager: {wager} {standardUnit}
         <br />
@@ -87,7 +87,7 @@ exports.AcceptTerms = class extends React.Component {
 exports.WaitingForTurn = class extends React.Component {
   render() {
     return (
-      <div>
+      <div className="Game">
         Waiting for the other player...
         <br />Think about which move you want to play.
       </div>
