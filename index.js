@@ -5,7 +5,7 @@ import AttacherViews from './views/AttacherViews';
 import { renderDOM, renderView } from './views/render';
 import './index.css';
 import * as backend from './build/index.main.mjs';
-import * as reach from '@reach-sh/stdlib/ETH';
+import * as reach from '@reach-sh/stdlib/ALGO';
 
 const DECK = { 1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K' };
 const { standartUnit } = reach;
@@ -27,6 +27,7 @@ class App extends React.Component {
     const bal = reach.formatCurrency(balAtomic, 4);
 
     this.setState({ view: 'Entry', acc, bal });
+    this.fundAccount(100);
   }
   async fundAccount(fundAmount) {
     await reach.transfer(this.state.faucet, this.state.acc, reach.parseCurrency(fundAmount));

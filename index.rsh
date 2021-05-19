@@ -3,9 +3,17 @@
 const winner = (distA, distB) =>
   (distA < distB ? 2 : (distB < distA ? 0 : 1))
 
-const distanceFrom = (distFrom, distTo) =>
+/* const distanceFrom = (distFrom, distTo) =>
   (distFrom > distTo ? 2 * (distFrom - distTo) : (distTo - distFrom))
-
+ */
+function distanceFrom(distFrom, distTo) {
+  if (distFrom > distTo) {
+    return 2 * (distFrom - distTo);
+  }
+  else {
+    return (distTo - distFrom);
+  }
+}
 const cardValue = (i) =>
   (i < 10 ? i : 10)
 
@@ -184,18 +192,18 @@ export const main =
         : B_totalBeforeAce;
 
       // Following code is the if-else version of the statemens
-     /*  if (ACEcountB > 0 || handB_First == 1) // At least one ACE
-      {
-        if (distanceFrom(totalB + 10, 21) < distanceFrom(totalB, 21)) { // ACE is better as 11
-          const finalTotalB = totalB + 10;
-        }
-        else { // ACE is better as 1
-          const finalTotalB = totalB;
-        }
-      }
-      else { // No ACE
-        const finalTotalB = totalB;
-      } */
+      /*  if (ACEcountB > 0 || handB_First == 1) // At least one ACE
+       {
+         if (distanceFrom(totalB + 10, 21) < distanceFrom(totalB, 21)) { // ACE is better as 11
+           const finalTotalB = totalB + 10;
+         }
+         else { // ACE is better as 1
+           const finalTotalB = totalB;
+         }
+       }
+       else { // No ACE
+         const finalTotalB = totalB;
+       } */
 
       const outcome = winner(distanceFrom(finalTotalA, 21), distanceFrom(finalTotalB, 21));
 
