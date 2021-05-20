@@ -2,9 +2,6 @@ import React from 'react';
 
 const exports = {};
 
-// Player views must be extended.
-// It does not have its own Wrapper view.
-
 exports.Wrapper = class extends React.Component{
   render() {
     const {content} = this.props;
@@ -71,13 +68,15 @@ exports.Done = class extends React.Component {
               <br/>{yourHand}
               <br/> Opponent hand is:
               <br/>{enemyHand}
-              <br /> Thank you for playing.
+              <br /> 
         <br />{outcome || 'Unknown'}
+        <br />
         <br />
         Sum of your cards: 
                 <br/>{sumA || "Unknown"}
                 <br/> Sum of opponents cards:
                 <br/>{sumB  || "Unknown"}
+        <br />
         <br />
         Balance: {bal} {standardUnit}
       </div>

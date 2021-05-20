@@ -1,34 +1,7 @@
 import React from 'react';
 import PlayerViews from './PlayerViews';
-import GameViews from './GameViews';
 
-const exports = {...PlayerViews, ...GameViews};
-
-/* exports.Wrapper = class extends React.Component {
-  render() {
-    const {content} = this.props;
-    return (
-      <div className="Attacher">
-        <h2>Attacher (Bob)</h2>
-        {content}
-      </div>
-    );
-  }
-}
- */
-/* exports.Wrapper = class extends React.Component{
-  render() {
-      const {myHand, opponentsHand} = this.props;
-      return(
-          <div className="Attacher">
-              Your hand is: 
-              <br/>{myHand || "Unknown"}
-              <br/> Opponent hand is:
-              <br/>{opponentsHand || "Unknown"}
-          </div>
-      );
-  }
-} */
+const exports = {...PlayerViews};
 
 exports.Attach = class extends React.Component {
   render() {

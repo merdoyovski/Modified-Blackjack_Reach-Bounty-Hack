@@ -39,13 +39,13 @@ exports.Entry = class extends React.Component {
               <li>However, if the value of your hand is greater than 21 then your distance will be multiplied by 2.</li>
               <li>i.e. if A got 20, B got 22: A wins because A is 1 away from 21 but B is (1*2) away from the 21.</li>
               <li>Each player can either choose to HIT or STAND at each round</li>
-              <li>The game will end when both players choose to STAND</li>
-              <li>You can't count the cards as the game has an infinite supply of each card.</li>
+              <li>The game will end when both players choose to STAND at the same turn.</li>
+              <li>No card counting! This game contains infinite amount of copy of each card!</li>
         </ul>
-        <br />
         Balance: {bal} {standardUnit}
         <hr />
         <button onClick={() => parent.skipEntry()}>Start the Game</button>
+        <hr />
       </div>
     );
   }

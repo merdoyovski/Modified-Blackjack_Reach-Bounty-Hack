@@ -3,9 +3,11 @@
 const winner = (distA, distB) =>
   (distA < distB ? 2 : (distB < distA ? 0 : 1))
 
+// Works on Ege's computer, throws bigNumberify error in Mert's computer
 /* const distanceFrom = (distFrom, distTo) =>
-  (distFrom > distTo ? 2 * (distFrom - distTo) : (distTo - distFrom))
- */
+(distFrom > distTo ? 2 * (distFrom - distTo) : (distTo - distFrom))
+*/
+
 function distanceFrom(distFrom, distTo) {
   if (distFrom > distTo) {
     return 2 * (distFrom - distTo);
@@ -122,11 +124,6 @@ export const main =
           [aHits, sumA, turn] = [cardA, sumA + cardValue(cardA), 1]
           continue;
         }
-        /* 
-                if(aHits == 0 && bHits == 0) // To prevent the case where 3 STAND in a row is needed
-                {
-                  continue;
-                } */
 
         // IN consensus step here
 
@@ -153,14 +150,6 @@ export const main =
         A.publish(); // Dummy publish
         [aHits, bHits] = [0, 0]; // This state will only be reached if (sumA>21 && sumB>21)
         continue;
-
-        // IN consensus step here
-
-        // As mentioned above, "isOnA = cardA" is used to terminate the loop when players choose to STAND.
-        //[isOnA, isOnB, sumA, sumB] = [cardValue(cardA), cardValue(cardB), sumA + cardValue(cardA), sumB + cardValue(cardB)];
-        //[isOnA, isOnB, sumA, sumB, AScountA, AScountB] = [cardValue(cardA), cardValue(cardB), sumA, sumB + cardValue(cardB), AScountA + 1, AScountB];
-        //[isOnA, isOnB, sumA, sumB, AScountA, AScountB] = [cardValue(cardA), cardValue(cardB), sumA, sumB + cardValue(cardB), AScountA, AScountB+1];
-        //[isOnA, isOnB, sumA, sumB, AScountA, AScountB] = [cardValue(cardA), cardValue(cardB), sumA + cardValue(cardA), sumB + cardValue(cardB), AScountA, AScountB];
       }
       // ******************************** Game Loop Ends ********************************
       commit();

@@ -1,38 +1,9 @@
 import React from 'react';
 import PlayerViews from './PlayerViews';
-import GameViews from './GameViews';
 
-const exports = {...PlayerViews, ...GameViews};
+const exports = {...PlayerViews};
 
 const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
-
-/* exports.Wrapper = class extends React.Component {
-  render() {
-    const {content} = this.props;
-    return (
-      <div className="Deployer">
-        <h2>Deployer (Alice)</h2>
-        {content}
-      </div>
-    );
-  }
-} */
-/* exports.Wrapper = class extends React.Component{
-    render() {
-      const {content} = this.props;
-        const {myHand, opponentsHand} = this.props;
-        return(
-            <div className="Deployer">
-                Your hand is: 
-                <br/>{myHand || "Unknown"}
-                <br/> Opponent hand is:
-                <br/>{opponentsHand || "Unknown"}
-                {content}
-            </div>
-        );
-    }
-  } */
-
 
 exports.SetWager = class extends React.Component {
   render() {
@@ -46,7 +17,7 @@ exports.SetWager = class extends React.Component {
           onChange={(e) => this.setState({wager: e.currentTarget.value})}
         /> {standardUnit}
         <br />
-        <button
+        <button className="setwager"
           onClick={() => parent.setWager(wager)}
         >Set wager</button>
       </div>

@@ -6,6 +6,8 @@ import { renderDOM, renderView } from './views/render';
 import './index.css';
 import * as backend from './build/index.main.mjs';
 import * as reach from '@reach-sh/stdlib/ALGO';
+//reach.setSignStrategy('AlgoSigner');
+
 
 const DECK = { 1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K' };
 const { standartUnit } = reach;
@@ -25,13 +27,15 @@ class App extends React.Component {
     const acc = await reach.getDefaultAccount();
     const balAtomic = await reach.balanceOf(acc);
     const bal = reach.formatCurrency(balAtomic, 4);
-
-    this.setState({ view: 'Entry', acc, bal });
+    const faucet = await reach.getFaucet();
+    await this.setState({ view: 'Entry', faucet, acc, bal });
     this.fundAccount(100);
   }
   async fundAccount(fundAmount) {
     await reach.transfer(this.state.faucet, this.state.acc, reach.parseCurrency(fundAmount));
-    this.setState({ view: 'DeployerOrAttacher' });
+    const balAtomic = await reach.balanceOf(this.state.acc);
+    const bal = reach.formatCurrency(balAtomic, 4);
+    this.setState({ view: 'Entry', bal, acc: this.state.acc});
   }
   async skipEntry() { this.setState({ view: 'DeployerOrAttacher' }); }
   selectAttacher() {
@@ -59,7 +63,6 @@ class Player extends React.Component {
       card = Math.floor(Math.random() * 12) + 1;
       myHand.push(DECK[card]);
 
-      //card = (card > 10 ? 10 : card);
       this.setState({ view: 'GetCard', yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), playable: false, waitForOpp: true, dealCards: false, getOpp: false, publishYourCard: false, getResults: false});
       return card;
     }
@@ -83,14 +86,13 @@ class Player extends React.Component {
   }
 
   async seeOutcome(i, _sumA, _sumB) {
-    const acc = await reach.getDefaultAccount();
-    const balAtomic = await reach.balanceOf(acc);
+    const balAtomic = await reach.balanceOf(this.props.acc);
     const balance = reach.formatCurrency(balAtomic, 4);
     const sumA = parseInt(_sumA);
     const sumB = parseInt(_sumB);
 
    
-    this.setState({ view: 'Done', outcome: (i==Who ? "You won the game":(i == 1 ? "Draw":"Opponent won the game")), yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), bal: balance, standartUnit: defaults[2],  sumA:(Who == 2 ? sumA:sumB ), sumB:(Who== 0 ? sumA:sumB ) });
+    this.setState({ view: 'Done', outcome: (i==Who ? "You won!":(i == 1 ? "It's a draw.":"Your opponent won.")), yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), bal: balance, standartUnit: defaults[2],  sumA:(Who == 2 ? sumA:sumB ), sumB:(Who== 0 ? sumA:sumB ) });
   }
   informTimeout() { this.setState({ view: 'Timeout' }); }
   playHand(i) {
@@ -108,7 +110,7 @@ class Player extends React.Component {
   getResultView(){
     this.setState({ view: 'GetCard', yourHand: myHand.join(", "), enemyHand: opponentHand.join(", "), playable: false,  waitForOpp: false, dealCards: false, getOpp: false, publishYourCard: false, getResults: true});
   }
-  printThis(toPrint){
+  printThis(toPrint){ // For debugging purposes
     console.log(toPrint);
   }
 }
