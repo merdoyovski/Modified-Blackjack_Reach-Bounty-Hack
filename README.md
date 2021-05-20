@@ -18,9 +18,9 @@ Implemented for the **Reach Bounty Hack Turkey**.
 * Node.js, docker, docker-compose must be installed first.
 * Run the Algorand devnet using `$ REACH_CONNECTOR_MODE=ALGO ./reach devnet`.
 
-* Start the web server with either
+* Start the web-app with either
 `$ ./reach react`
 or 
 `$ npm run start`
 
-* Open the **http://localhost:3000** on your browser, ports might differ in your computer Check the server terminal in case you can't see the server.
+* Open the **http://localhost:3000** on your browser, ports might differ in your computer. Check the server terminal in case you can't see the server.
