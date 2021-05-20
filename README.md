@@ -1,29 +1,26 @@
 # Reach Modified Blackjack DApp
 
-To run first make sure docker and docker-compose is installed.
-Then
+This is a modified version of the classic blackjack game implemented using Reach and runs on the Algorand blockchain. 
+Implemented for the **Reach Bounty Hack Turkey**.
 
-    ./reach scaffold
+## What is modified?
 
-Append the following lines to the docker-compose.yml file
+* Players can win from either side of the 21. However, going above 21 results in doubling your distance. 
+* Each player hides the first card they draw, others will be published.
 
-    player: &player
-      <<: *default-app
-      stdin_open: true
-    alice: *player
-    bob: *player
+## Some small points
 
-After that you can compile the reach code and build the program as follows
+* Only 1 ACE can be counted as 11, rest will be interpreted as 1. The smart contract automatically chooses the optimal ACE value.
+* If a players' published cards exceed 21, he/she can no longer hit.
+* There is an infinite amount of copies of each card, there is no way to count the cards.
 
-    ./reach compile
-    make build
-    
-To play as Alice
+## Instructions
+* Node.js, docker, docker-compose must be installed first.
+* Run the Algorand devnet using `$ REACH_CONNECTOR_MODE=ALGO ./reach devnet`.
 
-    docker-compose run --rm alice
-    
-To play as Bob
+* Start the web server with either
+`$ ./reach react`
+or 
+`$ npm run start`
 
-    docker-compose run --rm bob
-    
-    
+* Open the **http://localhost:3000** on your browser, ports might differ in your computer Check the server terminal in case you can't see the server.
