@@ -25,4 +25,4 @@ or
 
 * Open the **http://localhost:3000** on your browser, ports might differ in your computer. Check the server terminal in case you can't see the server.
 
-* If your docker container gets stuck when deploying use `$ ./reach docker-reset` and restart the web-app and the devnet manually.
+* If your docker container gets stuck in contract deployment, use `$ ./reach docker-reset` then restart the web-app and the devnet manually.
