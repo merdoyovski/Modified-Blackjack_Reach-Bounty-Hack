@@ -1,7 +1,7 @@
 # Reach Modified Blackjack DApp
 
 This is a modified version of the classic blackjack game implemented using Reach and runs on the Algorand blockchain. 
-Implemented for the **Reach Bounty Hack Turkey**.
+Implemented for the **Reach Bounty Hack Turkey**, where we won the first place. [Short demo](https://youtu.be/Vo8Yq0tMQRo)
 
 ## What is modified?
 
